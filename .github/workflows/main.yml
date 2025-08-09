@@ -1,8 +1,8 @@
-name: Deploy Zola to GitHub Pages
+name: Deploy Zola to GitHub Pages (Nix)
 
 on:
   push:
-    branches: [ "main", "master" ]   # covers common defaults
+    branches: [ "main", "master" ]
   workflow_dispatch:
 
 permissions:
@@ -21,25 +21,28 @@ jobs:
       - name: Check out
         uses: actions/checkout@v4
 
-      - name: Print ref for debugging
-        run: |
-          echo "GITHUB_REF=$GITHUB_REF"
-          echo "GITHUB_REF_NAME=$GITHUB_REF_NAME"
+      # Fast, reliable Nix on GitHub runners
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v14
+
+      # Optional but highly recommended: automatic binary cache setup
+      - name: Enable Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v7
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      # If your Zola site is in a subfolder, add:
-      # working-directory: ./site
-      - name: Build with Zola
-        uses: docker://ghcr.io/getzola/zola:latest
-        with:
-          args: build
+      # Build your site using Zola from nixpkgs
+      # If your site lives in a subfolder, add: working-directory: ./site
+      - name: Build with Zola (nixpkgs)
+        run: |
+          nix --version
+          nix run nixpkgs#zola -- build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: public   # change if you use --output-dir
+          path: public
 
   deploy:
     environment:
