@@ -2,10 +2,9 @@ name: Deploy Zola to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ]     # change if your default branch is different
+    branches: [ "main", "master" ]   # covers common defaults
   workflow_dispatch:
 
-# Required for GitHub Pages
 permissions:
   contents: read
   pages: write
@@ -22,24 +21,27 @@ jobs:
       - name: Check out
         uses: actions/checkout@v4
 
-      # Configures the Pages environment (artifact retention, etc.)
+      - name: Print ref for debugging
+        run: |
+          echo "GITHUB_REF=$GITHUB_REF"
+          echo "GITHUB_REF_NAME=$GITHUB_REF_NAME"
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      # Build the site with Zola inside the official container
+      # If your Zola site is in a subfolder, add:
+      # working-directory: ./site
       - name: Build with Zola
         uses: docker://ghcr.io/getzola/zola:latest
         with:
           args: build
 
-      # Upload the generated static site (Zola outputs to "public/")
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: public
+          path: public   # change if you use --output-dir
 
   deploy:
-    # "github-pages" env will show the deployed URL in the job summary
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
