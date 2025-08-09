@@ -20,6 +20,8 @@ taxonomies = [
     { name = "movies-directors", paginate_by = 2, feed = true },
 ]
 
+
+
 [search]
 index_format = "elasticlunr_json"
 
@@ -30,6 +32,8 @@ highlight_theme = "css"
 [extra]
 # Put all your custom variables here
 enable_theme_switching = true
+daisyui_theme_light = "valentine"
+daisyui_theme_dark = "valentine"
 
 [extra.footer]
 links = [
