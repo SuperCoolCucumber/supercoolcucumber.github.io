@@ -1,4 +1,4 @@
-name: Deploy Zola to GitHub Pages (Nix)
+name: Deploy Zola to GitHub Pages (Nix via Determinate)
 
 on:
   push:
@@ -18,26 +18,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out
+      - name: Check out (with submodules)
         uses: actions/checkout@v4
-
-      # Fast, reliable Nix on GitHub runners
+        with:
+          submodules: recursive
+          fetch-depth: 0
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v14
 
-      # Optional but highly recommended: automatic binary cache setup
       - name: Enable Nix cache
         uses: DeterminateSystems/magic-nix-cache-action@v7
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      # Build your site using Zola from nixpkgs
-      # If your site lives in a subfolder, add: working-directory: ./site
+      # If your Zola site lives in a subfolder, add: working-directory: ./site
       - name: Build with Zola (nixpkgs)
-        run: |
-          nix --version
-          nix run nixpkgs#zola -- build
+        run: nix run nixpkgs#zola -- build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
