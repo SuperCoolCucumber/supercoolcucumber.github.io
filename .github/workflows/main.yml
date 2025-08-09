@@ -1,4 +1,4 @@
-name: Deploy Zola to GitHub Pages (Nix)
+name: Deploy Zola to GitHub Pages (Nix, no flakes)
 
 on:
   push:
@@ -21,23 +21,28 @@ jobs:
       - name: Check out
         uses: actions/checkout@v4
 
-      # Fast, reliable Nix on GitHub runners
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v14
+      - name: Install Nix (official)
+        run: |
+          sh <(curl -L https://nixos.org/nix/install) --daemon
+          . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+          nix --version
 
-      # Optional but highly recommended: automatic binary cache setup
-      - name: Enable Nix cache
-        uses: DeterminateSystems/magic-nix-cache-action@v7
+      # Use an official nixpkgs channel (no flakes)
+      - name: Configure nixpkgs channel
+        run: |
+          nix-channel --add https://nixos.org/channels/nixos-24.05 nixpkgs
+          nix-channel --update
+          nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      # Build your site using Zola from nixpkgs
-      # If your site lives in a subfolder, add: working-directory: ./site
-      - name: Build with Zola (nixpkgs)
+      # Build the site with Zola from nixpkgs
+      # If your site is in a subfolder, add: working-directory: ./site
+      - name: Build with Zola (nixpkgs channel)
         run: |
-          nix --version
-          nix run nixpkgs#zola -- build
+          . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+          nix-shell -p zola --run "zola build"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
