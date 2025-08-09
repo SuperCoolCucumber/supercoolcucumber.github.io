@@ -5,7 +5,6 @@ on:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
-# Required for GitHub Pages
 permissions:
   contents: read
   pages: write
@@ -19,29 +18,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out
+      - name: Check out (with submodules)
         uses: actions/checkout@v4
+        with:
+          submodules: recursive   # <-- pulls themes/daisy
+          fetch-depth: 0          # <-- ensures the exact pinned commit is available
 
-      # Install Nix quickly and correctly on GitHub-hosted runners
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v14
 
-      # Optional but recommended: binary cache for much faster builds
       - name: Enable Nix cache
         uses: DeterminateSystems/magic-nix-cache-action@v7
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      # Build the site with Zola from nixpkgs (no repo flakes needed)
-      # If your site is in a subfolder, add: working-directory: ./site
+      # If your Zola site lives in a subfolder, add: working-directory: ./site
       - name: Build with Zola (nixpkgs)
         run: nix run nixpkgs#zola -- build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: public   # change if you use --output-dir
+          path: public
 
   deploy:
     environment:
