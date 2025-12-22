@@ -3,7 +3,7 @@ base_url = "https://zola-daisy.winterstein.biz"
 
 theme = "daisy"
 
-title = "Daria Cool!"
+title = "Daria G. 🍀"
 description = "Example / demo page for the Daisy theme for Zola."
 
 compile_sass = false
