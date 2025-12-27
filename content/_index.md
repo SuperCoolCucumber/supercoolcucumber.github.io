@@ -4,7 +4,7 @@ title = "Daria Galimzianova"
 
 An industrial researcher.
 
-Senior researcher at ([MWS AI](https://mts.ai)).
+Senior NLP researcher at [MWS AI](https://mts.ai).
 
 Doing a PhD under the gentle supervision of [Tim Baldwin](https://eltimster.github.io/www/) at [MBZUAI](https://mbzuai.ac.ae) in Abu Dhabi.
 

@@ -1,6 +1,5 @@
 +++
 title = 'About me'
-<!-- description = 'This site is an example / demo page for the Daisy theme for Zola.' -->
 +++
 
 ## My opinions (subject to change):
